@@ -1,0 +1,74 @@
+name: Images
+
+# Build and publish the container images to GitHub Container Registry (ghcr.io).
+# The builds run from the repo root and apply overlay/patches/* in their first
+# stage (see docs/patches.md), so this also validates the patches apply at build.
+#
+# Pull them instead of building locally, e.g.:
+#   docker pull ghcr.io/<owner>/jf-ai-dlc-services:main
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Env-agnostic backend images.
+          - image: jf-ai-dlc-services
+            file: deploy/compose/Dockerfile.services
+          - image: jf-ai-dlc-agentcore
+            file: overlay/agentcore/Dockerfile
+          - image: jf-ai-dlc-yjs-server
+            file: overlay/yjs-server/Dockerfile
+          # The frontend bakes VITE_* at build time, so this publishes the
+          # COMPOSE/localhost demo build (the Dockerfile ARG defaults). For a real
+          # deployment, rebuild it with your own URLs (build-args) — the published
+          # image is only correct for the localhost compose stack.
+          - image: jf-ai-dlc-frontend
+            file: overlay/frontend/Dockerfile
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Image metadata (tags + labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ matrix.image }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=sha,format=short
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.file }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
