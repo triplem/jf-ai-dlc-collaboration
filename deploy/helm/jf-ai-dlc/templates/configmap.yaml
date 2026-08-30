@@ -26,6 +26,10 @@ data:
   # runs as a durable execution (overlay/durable).
   V2_ORCHESTRATOR_FUNCTION: v2-orchestrator
   SOURCE_CONTROL_FUNCTION: source-control
+  # AgentCore invokes this lambda (via aws-shim) at each git network op to mint a
+  # short-lived clone credential from the user's stored OAuth token. Unset ->
+  # init-ws clone fails with "init_ws_failed: checkout_failed".
+  CREDENTIAL_BROKER_FUNCTION: credential-broker
   # cognito-users guards on this; aws-shim ignores the value and lists Keycloak.
   COGNITO_USER_POOL_ID: {{ .Values.auth.realm | quote }}
   OIDC_ISSUER: {{ .Values.endpoints.oidcIssuer | quote }}
