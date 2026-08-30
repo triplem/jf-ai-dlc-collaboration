@@ -1,0 +1,40 @@
+site_name: jf-ai-dlc-collaboration
+site_description: Self-hosted, OSS port of AWS's Collaborative AI-DLC platform
+# CI overrides these from the GitHub Actions context; the defaults are for local builds.
+site_url: !ENV [SITE_URL, "https://triplem.github.io/jf-ai-dlc-collaboration/"]
+repo_url: !ENV [REPO_URL, "https://github.com/triplem/jf-ai-dlc-collaboration"]
+
+docs_dir: docs
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - toc.integrate
+  palette:
+    - scheme: default
+      toggle: { icon: material/weather-night, name: Switch to dark mode }
+    - scheme: slate
+      toggle: { icon: material/weather-sunny, name: Switch to light mode }
+
+nav:
+  - Home: README.md
+  - Why this project exists: why.md
+  - Requirements & dependencies: requirements.md
+  - Updating the upstream: upstream-updates.md
+  - Docker images & Compose: docker.md
+  - Running an agent stage: running-an-agent-stage.md
+
+markdown_extensions:
+  - admonition
+  - tables
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+
+validation:
+  links:
+    absolute_links: ignore
+    unrecognized_links: ignore
