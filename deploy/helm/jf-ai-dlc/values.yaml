@@ -30,7 +30,9 @@ endpoints:
 auth:
   realm: jf-ai-dlc
   adminClientId: aws-shim-admin
-  # Secret with keys: kcAdminClientSecret, anthropicApiKey, openaiApiKey
+  # Secret with keys: kcAdminClientSecret, anthropicApiKey, openaiApiKey,
+  # realtimeDocSecret (shared HMAC secret for realtime doc-access tokens —
+  # required by yjs-server/ws-connection when DOC_TOKEN_ENFORCE is on)
   existingSecret: jf-ai-dlc-secrets
 
 naming:
