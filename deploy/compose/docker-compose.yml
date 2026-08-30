@@ -51,6 +51,12 @@ x-app-env: &app-env
   GITLAB_REDIRECT_URI: http://localhost:8088/gitlab/callback
   BITBUCKET_REDIRECT_URI: http://localhost:8088/bitbucket/callback
   JIRA_REDIRECT_URI: http://localhost:8088/trackers/callback/jira-cloud
+  # Path prefix under which git OAuth tokens are stored in SSM (emulated by
+  # aws-shim). The connect flow builds /<prefix>/<userId>/<provider> and the
+  # validator requires 4-5 path segments, so the prefix must be the terraform
+  # shape <project>/<env>/git-token. Unset -> "/undefined/..." -> the repo list
+  # fails validateParamName with a 500.
+  GIT_TOKEN_SSM_PREFIX: aidlc/local/git-token
   ARTIFACTS_BUCKET: artifacts
   AGENTCORE_RUNTIME_ARN: arn:aws:bedrock-agentcore:local:000000000000:runtime/local
   # Durable orchestrator: intent-start invokes this function, which aws-shim
