@@ -72,11 +72,16 @@ const claudeDriver = {
     // Claude Code uses the native Anthropic API when ANTHROPIC_API_KEY is set
     // and CLAUDE_CODE_USE_BEDROCK is not. See overlay/patches/.
     if (env.ANTHROPIC_API_KEY && !env.AWS_BEARER_TOKEN_BEDROCK) {
-      return {
+      const direct = {
         ANTHROPIC_API_KEY: env.ANTHROPIC_API_KEY,
         IS_SANDBOX: '1',
         CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
       };
+      // Workspace-scoped (identity-linked) keys require the workspace id; a
+      // custom-headers escape hatch is forwarded too. Both are no-ops if unset.
+      if (env.ANTHROPIC_WORKSPACE_ID) direct.ANTHROPIC_WORKSPACE_ID = env.ANTHROPIC_WORKSPACE_ID;
+      if (env.ANTHROPIC_CUSTOM_HEADERS) direct.ANTHROPIC_CUSTOM_HEADERS = env.ANTHROPIC_CUSTOM_HEADERS;
+      return direct;
     }
     const out = {
       CLAUDE_CODE_USE_BEDROCK: '1',

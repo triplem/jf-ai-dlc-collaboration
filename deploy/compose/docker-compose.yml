@@ -237,6 +237,8 @@ services:
     environment:
       <<: *app-env
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      # Required only for workspace-scoped (identity-linked) Anthropic keys.
+      ANTHROPIC_WORKSPACE_ID: ${ANTHROPIC_WORKSPACE_ID:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       # Remap the default Bedrock tier IDs to direct Anthropic model IDs. All
       # tiers → Sonnet for a cheap first run (override per your cost/quality).
