@@ -56,10 +56,15 @@ export const resolveModelId = (raw, { env = process.env } = {}) => {
   const aliases = loadAliases(env);
   const target = aliases[value.toLowerCase()];
   if (!target) return value; // unknown bare token — pass through, let the CLI decide
-  // Prefix the alias target with the geo unless it already carries one.
-  return isFullId(target) && /^(us|eu|apac)\./.test(target)
-    ? target
-    : `${regionPrefix(env.AWS_REGION || env.BEDROCK_REGION)}.${target}`;
+  // Already geo-prefixed Bedrock profile (us./eu./apac.) — leave alone.
+  if (/^(us|eu|apac)\./.test(target)) return target;
+  // A provider-qualified Bedrock id (anthropic.…, amazon-bedrock/…) gets the
+  // cross-region geo prefix. A BARE target — e.g. the direct Anthropic id
+  // "claude-sonnet-4-6" this OSS port maps tiers to via AIDLC_MODEL_ALIASES —
+  // must NOT be geo-prefixed: "us.claude-sonnet-4-6" is not a valid direct
+  // model id and the Anthropic API rejects it with 404 model_not_found.
+  if (isFullId(target)) return `${regionPrefix(env.AWS_REGION || env.BEDROCK_REGION)}.${target}`;
+  return target;
 };
 
 // CLIs whose `--model` value is a Bedrock id (inference profile / provider-
