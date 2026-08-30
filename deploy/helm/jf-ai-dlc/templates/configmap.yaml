@@ -41,4 +41,12 @@ data:
   GITLAB_OAUTH_SECRET_NAME: {{ printf "%s-gitlab-oauth-%s" .Values.naming.projectName .Values.naming.environment | quote }}
   BITBUCKET_OAUTH_SECRET_NAME: {{ printf "%s-bitbucket-oauth-%s" .Values.naming.projectName .Values.naming.environment | quote }}
   JIRA_OAUTH_SECRET_NAME: {{ printf "%s-jira-oauth-%s" .Values.naming.projectName .Values.naming.environment | quote }}
+  # OAuth redirect URIs the backend sends to each provider; register each one
+  # verbatim as the provider app's "Authorization callback URL" (they match
+  # exactly). Canonical app origin = the ingress host, per terraform's
+  # ${app_url}/<callback>. If you front the app on a different domain, override.
+  GITHUB_REDIRECT_URI: {{ printf "https://%s/github/callback" .Values.ingress.host | quote }}
+  GITLAB_REDIRECT_URI: {{ printf "https://%s/gitlab/callback" .Values.ingress.host | quote }}
+  BITBUCKET_REDIRECT_URI: {{ printf "https://%s/bitbucket/callback" .Values.ingress.host | quote }}
+  JIRA_REDIRECT_URI: {{ printf "https://%s/trackers/callback/jira-cloud" .Values.ingress.host | quote }}
   {{- include "jf.tables" . | nindent 2 }}
