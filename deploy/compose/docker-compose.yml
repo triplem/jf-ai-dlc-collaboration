@@ -32,6 +32,16 @@ x-app-env: &app-env
   # ws-connection (ws-gateway). It must be identical across all of them, so it
   # lives on the shared anchor. Local dev value only; DOC_TOKEN_ENFORCE stays on.
   REALTIME_DOC_SECRET: local-dev-realtime-doc-secret
+  # Secrets-Manager slot ids for the tracker/git OAuth-app credentials. The
+  # trackers handler (in api-router) writes the {client_id, client_secret} pair
+  # here from the Admin panel and reads it back for the OAuth flow; the store is
+  # emulated by aws-shim (aws_secrets table). Without these the Admin "configure
+  # OAuth app" call returns 503 "OAuth secret slot is not provisioned". The
+  # values are just secret ids — the pair is created on first write.
+  GITHUB_OAUTH_SECRET_NAME: github-oauth-local
+  GITLAB_OAUTH_SECRET_NAME: gitlab-oauth-local
+  BITBUCKET_OAUTH_SECRET_NAME: bitbucket-oauth-local
+  JIRA_OAUTH_SECRET_NAME: jira-oauth-local
   ARTIFACTS_BUCKET: artifacts
   AGENTCORE_RUNTIME_ARN: arn:aws:bedrock-agentcore:local:000000000000:runtime/local
   # Durable orchestrator: intent-start invokes this function, which aws-shim
