@@ -57,6 +57,12 @@ x-app-env: &app-env
   # shape <project>/<env>/git-token. Unset -> "/undefined/..." -> the repo list
   # fails validateParamName with a 500.
   GIT_TOKEN_SSM_PREFIX: aidlc/local/git-token
+  # SSM base prefix (/<project>/<env>) for per-project/global agent settings and
+  # custom-MCP-server config/secrets. Unset degrades gracefully (those features
+  # return empty / don't persist) rather than erroring; set so the Admin "custom
+  # MCP servers" + agent-settings persistence work. Matches terraform.
+  AGENT_SETTINGS_SSM_PREFIX: /aidlc/local
+  MCP_SECRETS_SSM_PREFIX: /aidlc/local
   ARTIFACTS_BUCKET: artifacts
   AGENTCORE_RUNTIME_ARN: arn:aws:bedrock-agentcore:local:000000000000:runtime/local
   # Durable orchestrator: intent-start invokes this function, which aws-shim
