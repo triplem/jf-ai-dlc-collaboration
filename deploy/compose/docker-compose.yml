@@ -27,6 +27,11 @@ x-app-env: &app-env
   GREMLIN_PORT: "8182"
   GREMLIN_PROTOCOL: ws
   WEBSOCKET_ENDPOINT: http://ws-gateway:3002
+  # Shared HMAC secret for realtime doc-access tokens: minted by the intents /
+  # discussions handlers (api-router, aws-shim) and verified by yjs-server and
+  # ws-connection (ws-gateway). It must be identical across all of them, so it
+  # lives on the shared anchor. Local dev value only; DOC_TOKEN_ENFORCE stays on.
+  REALTIME_DOC_SECRET: local-dev-realtime-doc-secret
   ARTIFACTS_BUCKET: artifacts
   AGENTCORE_RUNTIME_ARN: arn:aws:bedrock-agentcore:local:000000000000:runtime/local
   # Durable orchestrator: intent-start invokes this function, which aws-shim
