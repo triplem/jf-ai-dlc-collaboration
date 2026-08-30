@@ -271,18 +271,33 @@ Everything that differs from upstream, in one place.
   minting/suspend, and callback resume all verified. `init-ws` succeeds via
   agentcore, which then spawns **Claude Code with the AI-DLC MCP server
   `connected`** (the MCP→graph write path). The Claude driver runs in
-  direct-Anthropic mode (not Bedrock). The only step not yet exercised is the
-  model call itself, which needs an `ANTHROPIC_API_KEY` (403 without one).
+  direct-Anthropic mode (not Bedrock).
+- **Live agent stage (with a real key)**: starting a greenfield intent runs the
+  first stage (`workspace-scaffold`) end-to-end on **real Claude Sonnet
+  inference** — `is_error:false`, the agent reasons about the task via the MCP
+  tools and reports `Stage complete — workspace scaffolded … with phase
+  directories for initialization, inception, construction, and verification`.
+  The stage callback resolves through the durable emulator (8 invocations of
+  PENDING/SUCCEEDED replay cycles) and the durable execution completes cleanly.
+  This exercises the entire OSS port — including the from-scratch
+  durable-execution runtime — with a real agent doing real model work. The
+  33-stage plan pauses after the initialization stage (this is an interactive,
+  human-gated methodology); driving the remaining stages is a follow-up (each
+  needs inference and, at gates, human input). Note: a workspace-scoped
+  (identity-linked) Anthropic key additionally needs `ANTHROPIC_WORKSPACE_ID`
+  (the driver forwards it); a standard org key works directly.
 - Helm: `helm lint` clean, `helm template` renders 16 resources.
 
 ## Known gaps
 
-- **A live agent stage producing an artifact** is one step from done: the
-  durable orchestrator drives the stack all the way to Claude Code with the MCP
-  server connected, but the model call needs an `ANTHROPIC_API_KEY` in
-  `deploy/compose/.env`. With the key, the stage authenticates, writes an
-  artifact via the MCP tools, and the callback resumes the run to the next
-  stage. See [docs/running-an-agent-stage.md](docs/running-an-agent-stage.md).
+- **Multi-stage workflow progression**: a live agent run currently executes the
+  first (`workspace-scaffold`) stage end-to-end and the durable execution
+  completes at that natural pause point; auto-advancing through the remaining
+  stages of the 33-stage plan (past the interactive/gated boundaries, producing
+  downstream document artifacts) is not yet exercised. The single-stage run —
+  real Claude inference, MCP-connected, durable callback resume — is verified;
+  see the *Verification status* above and
+  [docs/running-an-agent-stage.md](docs/running-an-agent-stage.md).
 - **Live collaborative editing session** (two browsers editing one intent
   document) needs a seeded intent + document + per-intent doc token, which the
   orchestrator mints during a real agent run. The realtime transport, auth, and
