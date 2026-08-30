@@ -28,6 +28,14 @@ spec:
           env:
             - name: PORT
               value: {{ .Values.yjsServer.port | quote }}
+            # yjs-server verifies the realtime doc token with this shared HMAC
+            # secret; it must match the one the api-router pods mint with.
+            - name: REALTIME_DOC_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.existingSecret }}
+                  key: realtimeDocSecret
+                  optional: true
           ports:
             - containerPort: {{ .Values.yjsServer.port }}
           resources: {{ toYaml .Values.resources | nindent 12 }}

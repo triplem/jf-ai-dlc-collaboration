@@ -33,4 +33,12 @@ data:
   KC_URL: {{ .Values.endpoints.keycloakInternal | quote }}
   KC_REALM: {{ .Values.auth.realm | quote }}
   KC_ADMIN_CLIENT_ID: {{ .Values.auth.adminClientId | quote }}
+  # Secrets-Manager slot ids for the tracker/git OAuth-app credential pairs.
+  # The trackers handler (api-router) writes {client_id, client_secret} here from
+  # the Admin panel and reads it back for the OAuth flow (store = aws-shim). These
+  # are non-sensitive ids; the credential pair itself is created on first write.
+  GITHUB_OAUTH_SECRET_NAME: {{ printf "%s-github-oauth-%s" .Values.naming.projectName .Values.naming.environment | quote }}
+  GITLAB_OAUTH_SECRET_NAME: {{ printf "%s-gitlab-oauth-%s" .Values.naming.projectName .Values.naming.environment | quote }}
+  BITBUCKET_OAUTH_SECRET_NAME: {{ printf "%s-bitbucket-oauth-%s" .Values.naming.projectName .Values.naming.environment | quote }}
+  JIRA_OAUTH_SECRET_NAME: {{ printf "%s-jira-oauth-%s" .Values.naming.projectName .Values.naming.environment | quote }}
   {{- include "jf.tables" . | nindent 2 }}

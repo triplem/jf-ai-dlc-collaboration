@@ -38,6 +38,15 @@ spec:
                   name: {{ $.Values.auth.existingSecret }}
                   key: kcAdminClientSecret
                   optional: true
+            # Shared HMAC secret for realtime doc-access tokens (minted by
+            # intents/discussions, verified by yjs-server + ws-connection). Must
+            # be identical across all pods; provision it in the existingSecret.
+            - name: REALTIME_DOC_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.auth.existingSecret }}
+                  key: realtimeDocSecret
+                  optional: true
             {{- range $k, $v := $svc.env }}
             - name: {{ $k }}
               value: {{ $v | quote }}
