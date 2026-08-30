@@ -1288,7 +1288,7 @@ export const handler = async (event) => {
             name: getVal(v, 'name'),
             gitProvider: getVal(v, 'git_provider') || 'github',
             gitRepo: derivePrimaryRepo(repos, legacyGitRepo),
-            agentCli: getVal(v, 'agent_cli') || 'claude',
+            agentCli: getVal(v, 'agent_cli') || 'kiro',
             cliModels: parseCliModels(getVal(v, 'cli_models')),
             tierModels: parseTierModels(getVal(v, 'tier_models')),
             issueIntegrationEnabled: getVal(v, 'issue_integration_enabled') === 'true',
@@ -1339,7 +1339,7 @@ export const handler = async (event) => {
               name: getVal(v, 'name'),
               gitProvider: getVal(v, 'git_provider') || 'github',
               gitRepo: derivePrimaryRepo(repos, legacyGitRepo),
-              agentCli: getVal(v, 'agent_cli') || 'claude',
+              agentCli: getVal(v, 'agent_cli') || 'kiro',
               cliModels: parseCliModels(getVal(v, 'cli_models')),
               tierModels: parseTierModels(getVal(v, 'tier_models')),
               issueIntegrationEnabled: getVal(v, 'issue_integration_enabled') === 'true',
@@ -1463,7 +1463,7 @@ export const handler = async (event) => {
           .property('name', data.name)
           .property('git_provider', data.gitProvider || 'github')
           .property('git_repo', primaryUrl)
-          .property('agent_cli', data.agentCli || 'claude')
+          .property('agent_cli', data.agentCli || 'kiro')
           .property('cli_models', JSON.stringify(cliModels))
           .property('tier_models', JSON.stringify(tierModels))
           .property('issue_integration_enabled', issueIntegrationEnabled ? 'true' : 'false')
@@ -1539,7 +1539,7 @@ export const handler = async (event) => {
           name: data.name,
           gitProvider: data.gitProvider || 'github',
           gitRepo: primaryUrl,
-          agentCli: data.agentCli || 'claude',
+          agentCli: data.agentCli || 'kiro',
           cliModels,
           tierModels,
           issueIntegrationEnabled,

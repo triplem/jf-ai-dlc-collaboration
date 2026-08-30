@@ -23,6 +23,7 @@ go deeper on specific topics.
 | [Updating the upstream](upstream-updates.md) | How to fetch a newer Collaborative AI-DLC version through the git-subtree + overlay pipeline |
 | [Docker images & Compose](docker.md) | Every image (custom and third-party) and a service-by-service tour of the Compose stack |
 | [Running an agent stage](running-an-agent-stage.md) | End-to-end: a greenfield intent → durable orchestrator → agentcore → Claude Code runs a stage → artifact in the graph |
+| [Modifying upstream — the patch workflow](patches.md) | Why `upstream/` stays pristine, how `overlay/patches/` apply at build time, and how to author/refresh a patch |
 | [Running a full e2e test](e2e-testing.md) | Both test layers in one place: the API/auth smoke, then the agent-stage path, with pass criteria and the token-expiry / right-session gotchas |
 
 ## Quick links

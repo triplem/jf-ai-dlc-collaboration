@@ -5,7 +5,7 @@ import * as encoding from 'lib0/encoding';
 import * as decoding from 'lib0/decoding';
 import * as syncProtocol from 'y-protocols/sync';
 import * as awarenessProtocol from 'y-protocols/awareness';
-import { createRemoteJWKSet, jwtVerify } from 'jose';
+import { CognitoJwtVerifier } from 'aws-jwt-verify';
 import { verifyRealtimeAccess, requiredScopeForYjsDoc } from './realtime-token.js';
 import { docNameFromPath } from './doc-name.js';
 
@@ -36,37 +36,30 @@ if (DOC_TOKEN_ENFORCE && !REALTIME_DOC_SECRET) {
 }
 
 // -----------------------------------------------------------------------------
-// OIDC (Keycloak) JWT verifier
+// Cognito JWT verifier
 //
-// jf-ai-dlc port: upstream verifies a Cognito ID token here; this OSS build
-// authenticates against Keycloak's OIDC JWKS instead — the same mechanism the
-// ws-gateway overlay uses (jose + createRemoteJWKSet). We authenticate every
-// WebSocket upgrade by verifying the ID token passed as `?token=<jwt>`.
+// We authenticate every WebSocket upgrade by verifying a Cognito ID token
+// passed as `?token=<jwt>` in the query string. This mirrors the pattern used
+// by the API Gateway WebSocket authorizer (see `lambda/ws-authorizer/index.js`).
 //
-// The JWKS is fetched lazily on first use and cached in-memory by jose, so
-// there is no per-connection network round-trip after warm-up.
+// The verifier lazily fetches the Cognito JWKS on first use and caches it
+// in-memory, so there is no per-connection network round-trip after warm-up.
 // -----------------------------------------------------------------------------
-const OIDC_ISSUER = process.env.OIDC_ISSUER;
+const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID;
+const COGNITO_CLIENT_ID = process.env.COGNITO_CLIENT_ID;
 
-if (!OIDC_ISSUER) {
-  console.error('FATAL: OIDC_ISSUER must be set in the environment.');
+if (!COGNITO_USER_POOL_ID || !COGNITO_CLIENT_ID) {
+  console.error(
+    'FATAL: COGNITO_USER_POOL_ID and COGNITO_CLIENT_ID must be set in the environment.',
+  );
   process.exit(1);
 }
 
-const OIDC_JWKS_URL =
-  process.env.OIDC_JWKS_URL || `${OIDC_ISSUER.replace(/\/$/, '')}/protocol/openid-connect/certs`;
-
-let jwks;
-const getJwks = () => (jwks ??= createRemoteJWKSet(new URL(OIDC_JWKS_URL)));
-
-// Same `.verify(token) -> payload` shape the upgrade handler expects
-// (payload.sub binds the doc token to the authenticated principal).
-const verifier = {
-  verify: async (token) => {
-    const { payload } = await jwtVerify(token, getJwks(), { issuer: OIDC_ISSUER });
-    return payload;
-  },
-};
+const verifier = CognitoJwtVerifier.create({
+  userPoolId: COGNITO_USER_POOL_ID,
+  tokenUse: 'id',
+  clientId: COGNITO_CLIENT_ID,
+});
 
 const docs = new Map();
 
@@ -354,5 +347,5 @@ wss.on('connection', (conn, req) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Yjs server running on port ${PORT} (OIDC/Keycloak auth enabled)`);
+  console.log(`Yjs server running on port ${PORT} (Cognito auth enabled)`);
 });

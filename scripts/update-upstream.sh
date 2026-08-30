@@ -5,10 +5,11 @@
 #   scripts/update-upstream.sh                  # re-sync the current ref (no-op drill)
 #   scripts/update-upstream.sh <ref>            # bump sample-collaborative-ai-dlc
 #
-# Steps: git subtree pull → apply overlay/patches/*.patch (fails loudly on
-# conflict) → regen routes/tables → run the dynamo-pg + durable suites → refresh
-# UPSTREAM_VERSIONS.md. Review `git log`/`git diff` afterwards and run the oracle
-# (upstream vitest via overlay/oracle) before merging.
+# Steps: git subtree pull → VERIFY overlay/patches/*.patch still apply (fails
+# loudly on conflict; upstream/collab stays PRISTINE — patches are applied at
+# image build time, see docs/patches.md) → regen routes/tables → run the
+# dynamo-pg + durable suites → refresh UPSTREAM_VERSIONS.md. Review
+# `git log`/`git diff` afterwards and run the oracle (overlay/oracle) before merging.
 #
 # The AI-DLC methodology plugin (awslabs/aidlc-workflows) lives in the sibling
 # repo jf-ai-dlc — this repo only vendors the collaboration platform.
@@ -28,13 +29,17 @@ echo "==> subtree pull collab @ ${collab_ref}"
 git subtree pull --prefix=upstream/collab "$COLLAB_REPO" "$collab_ref" --squash \
   -m "Update upstream/collab to ${collab_ref}"
 
-echo "==> apply overlay patches"
+echo "==> verify overlay patches still apply (upstream stays pristine)"
+# We do NOT commit the applied result — upstream/collab is a pristine vendor and
+# the patches are applied at image build time (Dockerfiles). Here we only CHECK
+# they still apply cleanly against the freshly-pulled upstream, so a conflicting
+# patch is caught at update time rather than at build. See docs/patches.md.
 shopt -s nullglob
 for patch in overlay/patches/*.patch; do
-  echo "  applying ${patch}"
-  if ! git apply --3way "$patch"; then
+  echo "  checking ${patch}"
+  if ! git apply --check "$patch"; then
     echo "PATCH CONFLICT: ${patch} no longer applies — upstream changed the patched code." >&2
-    echo "Resolve manually, refresh the patch, and re-run." >&2
+    echo "Refresh the patch (docs/patches.md) and re-run." >&2
     exit 1
   fi
 done

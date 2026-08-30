@@ -220,7 +220,10 @@ services:
 
   yjs-server:
     build:
-      context: ../../upstream/collab/lambda/yjs-server
+      # Repo root + overlay Dockerfile so overlay/patches (0002: Keycloak WS auth)
+      # apply at build time; upstream/collab stays pristine. See docs/patches.md.
+      context: ../..
+      dockerfile: overlay/yjs-server/Dockerfile
     environment:
       <<: *app-env
       PORT: "1234"
