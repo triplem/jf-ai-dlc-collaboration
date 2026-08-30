@@ -85,7 +85,8 @@ overlay/             all local code
   bootstrap/         table/bucket creation (+ generated tables.json)
   oracle/            runs the upstream vitest suite against dynamo-pg
   frontend/          Keycloak/OIDC auth swap + Vite override + SPA Dockerfile
-  patches/           in-tree diffs (the direct-Anthropic driver patch)
+  patches/           local edits to upstream, applied at image BUILD time
+                     (upstream stays pristine) — see docs/patches.md
 deploy/compose/      full test stack        deploy/helm/jf-ai-dlc/  prod chart
 scripts/             generators + update workflow
 docs/                topical documentation (see below)
@@ -101,6 +102,7 @@ overview):
 - [Updating the upstream](docs/upstream-updates.md) — how to fetch a newer Collaborative AI-DLC version.
 - [Docker images & Compose](docs/docker.md) — every image and a service-by-service tour of the Compose stack.
 - [Running an agent stage](docs/running-an-agent-stage.md) — end-to-end: a greenfield intent → durable orchestrator → agentcore → Claude Code runs a stage → artifact in the graph.
+- [Modifying upstream — the patch workflow](docs/patches.md) — how `overlay/patches/` keeps `upstream/` pristine and how to author/refresh a patch.
 
 ## Scripts
 
@@ -110,7 +112,8 @@ All scripts are safe to re-run (idempotent).
 |---|---|
 | `gen-routes.mjs` | Parses the upstream terraform API module into `overlay/api-router/routes.json` (164 routes / 23 lambdas). Re-run after every upstream update. |
 | `gen-tables.mjs` | Parses every `aws_dynamodb_table` in the upstream terraform into `overlay/bootstrap/tables.json` (14 tables + GSIs). Re-run after every upstream update. |
-| `update-upstream.sh [<ref>]` | Pulls the `upstream/collab` subtree, re-applies `overlay/patches/`, regenerates routes/tables, runs the adapter + durable tests, and refreshes `UPSTREAM_VERSIONS.md`. |
+| `apply-patches.sh [root]` | Applies `overlay/patches/*.patch` onto the pristine `upstream/collab` subtree (used by the Docker builds and for local patch authoring — see [docs/patches.md](docs/patches.md)). |
+| `update-upstream.sh [<ref>]` | Pulls the `upstream/collab` subtree, **verifies** `overlay/patches/` still apply (upstream stays pristine — patches apply at build), regenerates routes/tables, runs the adapter + durable tests, and refreshes `UPSTREAM_VERSIONS.md`. |
 | `overlay/bootstrap/bootstrap.mjs` | One-shot stack bootstrap — creates the DynamoDB tables (from `tables.json`) and S3 buckets. Run as the `bootstrap` compose service or the Helm bootstrap Job. |
 
 ## Usage

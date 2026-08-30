@@ -8,6 +8,21 @@
 # same contract: listen on 0.0.0.0:8080, GET /ping + POST /invocations.
 #
 # Build context = repo root (so it can COPY the agentcore package + shared/ helpers).
+
+# --- stage 1: apply overlay/patches onto the pristine upstream subtree --------
+# upstream/collab is a pristine git-subtree vendor (README: never hand-edit);
+# local modifications live as overlay/patches/*.patch, applied here at build
+# time (git apply fails loudly if a patch no longer applies). See docs/patches.md.
+FROM node:24-slim AS upstream-patched
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /src
+COPY upstream/collab/lambda upstream/collab/lambda
+COPY overlay/patches overlay/patches
+RUN for p in overlay/patches/*.patch; do echo "applying $p"; git apply "$p"; done
+
+# --- stage 2: runtime image ---------------------------------------------------
 FROM node:24-slim
 
 RUN apt-get update \
@@ -33,11 +48,12 @@ RUN curl -LsSf https://astral.sh/uv/install.sh \
     && ln -sf /opt/uv/bin/uv /usr/local/bin/uv \
     && ln -sf /opt/uv/bin/uvx /usr/local/bin/uvx
 
-COPY upstream/collab/lambda/agentcore/package.json /opt/agentcore/package.json
+# agentcore sources come PATCHED from stage 1.
+COPY --from=upstream-patched /src/upstream/collab/lambda/agentcore/package.json /opt/agentcore/package.json
 RUN cd /opt/agentcore && npm install --omit=dev
 
-COPY upstream/collab/lambda/agentcore/ /opt/agentcore/
-COPY upstream/collab/lambda/shared/ /opt/shared/
+COPY --from=upstream-patched /src/upstream/collab/lambda/agentcore/ /opt/agentcore/
+COPY --from=upstream-patched /src/upstream/collab/lambda/shared/ /opt/shared/
 RUN ln -s /opt/agentcore/node_modules /opt/shared/node_modules
 
 RUN mkdir -p /mnt/workspace /home/node/.codex-state /home/node/.codex-runs \

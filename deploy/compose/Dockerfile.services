@@ -1,6 +1,20 @@
 # Shared image for all overlay Node services (api-router, ws-gateway, aws-shim,
 # dynamo-pg, session-runner, bootstrap). Build context = repo root; the compose
 # services pick their entrypoint via `command`.
+
+# --- stage 1: apply overlay/patches onto the pristine upstream subtree --------
+# upstream/collab is a pristine git-subtree vendor (README: never hand-edit);
+# local modifications live as overlay/patches/*.patch and are applied here at
+# build time (git apply fails loudly if a patch no longer applies). See
+# docs/patches.md.
+FROM node:22-alpine AS upstream-patched
+RUN apk add --no-cache git
+WORKDIR /src
+COPY upstream/collab/lambda upstream/collab/lambda
+COPY overlay/patches overlay/patches
+RUN for p in overlay/patches/*.patch; do echo "applying $p"; git apply "$p"; done
+
+# --- stage 2: runtime image ---------------------------------------------------
 FROM node:22-alpine
 
 # docker CLI for session-runner's docker backend (talks to the mounted socket)
@@ -8,9 +22,11 @@ RUN apk add --no-cache docker-cli
 
 WORKDIR /app
 
-# Upstream lambda workspace deps first (biggest layer, changes least)
+# Upstream lambda workspace deps first (biggest layer, changes least). The
+# workspace package.json/lock are unpatched, so copy them from the context;
+# the lambda sources come PATCHED from stage 1.
 COPY upstream/collab/package.json upstream/collab/package-lock.json upstream/collab/
-COPY upstream/collab/lambda upstream/collab/lambda
+COPY --from=upstream-patched /src/upstream/collab/lambda upstream/collab/lambda
 # husky's prepare hook is dev-only tooling; drop it (devDeps are omitted)
 RUN cd upstream/collab && npm pkg delete scripts.prepare \
  && npm ci --omit=dev --no-audit --no-fund

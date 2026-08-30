@@ -27,6 +27,7 @@ nav:
   - Docker images & Compose: docker.md
   - Running an agent stage: running-an-agent-stage.md
   - Running a full e2e test: e2e-testing.md
+  - Modifying upstream (patches): patches.md
 
 markdown_extensions:
   - admonition

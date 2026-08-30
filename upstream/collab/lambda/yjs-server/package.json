@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "jose": "^6.0.0",
+    "aws-jwt-verify": "^4.0.0",
     "lib0": "^0.2.117",
     "ws": "^8.21.0",
     "y-websocket": "^2.0.0",
