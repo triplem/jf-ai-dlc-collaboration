@@ -63,6 +63,28 @@ test('step SUCCEED stores the result; RETRY maps to PENDING (re-run on replay)',
   assert.equal(retry.body.NewExecutionState.Operations[0].Status, 'PENDING');
 });
 
+// Replay contract: the SDK checkpoints a step result verbatim as `Payload`, but
+// on replay reads it back from `StepDetails.Result`. The service must translate,
+// or every replayed step returns undefined (the orchestrator then reads a null
+// META on its first resume and bails with execution_not_found — no run advances
+// past stage 1). Both the checkpoint response AND GetState (the replay source)
+// must carry StepDetails.Result.
+test('step SUCCEED result is readable on replay as StepDetails.Result', async () => {
+  const arn = 'arn:aws:lambda:us-east-1:000000000000:durable-execution:test:replay';
+  const payload = JSON.stringify({ meta: 'value', n: 7 });
+  const ck = await rest('POST', `/2025-12-01/durable-executions/${arn}/checkpoint`, {
+    CheckpointToken: 't1',
+    Updates: [{ Id: 'step-replay', Type: 'STEP', SubType: 'Step', Action: 'SUCCEED', Payload: payload, Name: 'load' }],
+  });
+  const echoed = ck.body.NewExecutionState.Operations[0];
+  assert.equal(echoed.StepDetails?.Result, payload, 'checkpoint response carries StepDetails.Result');
+
+  // GetState is what a re-invoke replays from (InitialExecutionState.Operations).
+  const state = await rest('GET', `/2025-12-01/durable-executions/${arn}/state`);
+  const op = state.body.Operations.find((o) => o.Id === 'step-replay');
+  assert.equal(op.StepDetails?.Result, payload, 'replayed op carries StepDetails.Result');
+});
+
 test('GetDurableExecutionState returns the full operation log', async () => {
   const res = await rest('GET', `/2025-12-01/durable-executions/${ARN}/state`);
   assert.equal(res.status, 200);
