@@ -1,0 +1,26 @@
+# Shared image for all overlay Node services (api-router, ws-gateway, aws-shim,
+# dynamo-pg, session-runner, bootstrap). Build context = repo root; the compose
+# services pick their entrypoint via `command`.
+FROM node:22-alpine
+
+# docker CLI for session-runner's docker backend (talks to the mounted socket)
+RUN apk add --no-cache docker-cli
+
+WORKDIR /app
+
+# Upstream lambda workspace deps first (biggest layer, changes least)
+COPY upstream/collab/package.json upstream/collab/package-lock.json upstream/collab/
+COPY upstream/collab/lambda upstream/collab/lambda
+# husky's prepare hook is dev-only tooling; drop it (devDeps are omitted)
+RUN cd upstream/collab && npm pkg delete scripts.prepare \
+ && npm ci --omit=dev --no-audit --no-fund
+
+# Overlay services
+COPY overlay overlay
+RUN cd overlay/dynamo-pg && npm install --omit=dev --no-audit --no-fund \
+ && cd ../api-router && npm install --omit=dev --no-audit --no-fund \
+ && cd ../ws-gateway && npm install --omit=dev --no-audit --no-fund \
+ && cd ../aws-shim && npm install --omit=dev --no-audit --no-fund
+
+ENV NODE_ENV=production
+CMD ["node", "--version"]

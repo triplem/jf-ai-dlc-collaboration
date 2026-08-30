@@ -1,0 +1,14 @@
+{
+  "name": "@jf-ai-dlc/ws-gateway",
+  "version": "0.1.0",
+  "description": "API Gateway WebSocket replacement: terminates client sockets, drives the upstream ws-connection/ws-message handlers, and serves the @connections management API used by ws-fanout",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "jose": "^6.0.0",
+    "ws": "^8.18.0"
+  }
+}

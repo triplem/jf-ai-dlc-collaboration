@@ -1,0 +1,104 @@
+{{- if .Values.yjsServer.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-yjs-server
+  labels:
+    app.kubernetes.io/name: yjs-server
+    {{- include "jf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.yjsServer.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: yjs-server
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: yjs-server
+        {{- include "jf.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: yjs-server
+          image: "{{ .Values.image.repository }}-yjs:{{ .Values.image.tag }}"
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-env
+          env:
+            - name: PORT
+              value: {{ .Values.yjsServer.port | quote }}
+          ports:
+            - containerPort: {{ .Values.yjsServer.port }}
+          resources: {{ toYaml .Values.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-yjs-server
+  labels: {{ include "jf.labels" . | nindent 4 }}
+spec:
+  selector:
+    app.kubernetes.io/name: yjs-server
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - port: {{ .Values.yjsServer.port }}
+      targetPort: {{ .Values.yjsServer.port }}
+{{- end }}
+{{- if .Values.agentcore.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-agentcore
+  labels:
+    app.kubernetes.io/name: agentcore
+    {{- include "jf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.agentcore.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: agentcore
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: agentcore
+        {{- include "jf.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: agentcore
+          image: "{{ .Values.agentImage.repository }}:{{ .Values.agentImage.tag }}"
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-env
+          env:
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.existingSecret }}
+                  key: anthropicApiKey
+                  optional: true
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.existingSecret }}
+                  key: openaiApiKey
+                  optional: true
+          ports:
+            - containerPort: 8080
+          resources: {{ toYaml .Values.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-agentcore
+  labels: {{ include "jf.labels" . | nindent 4 }}
+spec:
+  selector:
+    app.kubernetes.io/name: agentcore
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - port: 8080
+      targetPort: 8080
+{{- end }}

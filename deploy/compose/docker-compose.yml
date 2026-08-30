@@ -1,0 +1,252 @@
+# jf-ai-dlc test stack — the collaborative AI-DLC platform on OSS services.
+#
+#   docker compose up -d          # infra + platform services
+#   --profile agents up -d        # + the agentcore runtime (heavy image build)
+#
+# Host ports chosen to avoid the (gitignored) claude-otel stack (3000/3100/9090/431x).
+
+name: jf-ai-dlc
+
+x-aws-env: &aws-env
+  AWS_ACCESS_KEY_ID: local
+  AWS_SECRET_ACCESS_KEY: local
+  AWS_REGION: us-east-1
+  AWS_ENDPOINT_URL_DYNAMODB: http://dynamo-pg:8000
+  DYNAMODB_LOCAL_ENDPOINT: http://dynamo-pg:8000
+  AWS_ENDPOINT_URL_S3: http://seaweedfs:8333
+  AWS_ENDPOINT_URL_SSM: http://aws-shim:3004
+  AWS_ENDPOINT_URL_SECRETS_MANAGER: http://aws-shim:3004
+  AWS_ENDPOINT_URL_LAMBDA: http://aws-shim:3004
+  AWS_ENDPOINT_URL_PRICING: http://aws-shim:3004
+  AWS_ENDPOINT_URL_COGNITO_IDENTITY_PROVIDER: http://aws-shim:3004
+  AWS_ENDPOINT_URL_BEDROCK_AGENTCORE: http://session-runner:3003
+
+x-app-env: &app-env
+  <<: *aws-env
+  NEPTUNE_ENDPOINT: gremlin
+  GREMLIN_PORT: "8182"
+  GREMLIN_PROTOCOL: ws
+  WEBSOCKET_ENDPOINT: http://ws-gateway:3002
+  ARTIFACTS_BUCKET: artifacts
+  AGENTCORE_RUNTIME_ARN: arn:aws:bedrock-agentcore:local:000000000000:runtime/local
+  # Durable orchestrator: intent-start invokes this function, which aws-shim
+  # runs as a durable execution (overlay/durable). SOURCE_CONTROL_FUNCTION is
+  # the git ops lambda (unused for repo-less greenfield intents).
+  V2_ORCHESTRATOR_FUNCTION: v2-orchestrator
+  SOURCE_CONTROL_FUNCTION: source-control
+  DURABLE_VERBOSE_MODE: "true"
+  # public issuer (what tokens carry in `iss`) vs in-network JWKS fetch URL
+  OIDC_ISSUER: http://localhost:8081/realms/jf-ai-dlc
+  OIDC_JWKS_URL: http://keycloak:8080/realms/jf-ai-dlc/protocol/openid-connect/certs
+  # cognito-users guards on this; aws-shim ignores the value and lists Keycloak
+  # realm users. Any non-empty placeholder unlocks the admin user-management API.
+  COGNITO_USER_POOL_ID: local-pool
+  # table names: gen-tables templates with PROJECT_NAME=aidlc ENVIRONMENT=local
+  AGENT_OUTPUTS_TABLE: aidlc-agent-outputs-local
+  BLOCKS_TABLE: aidlc-blocks-local
+  CONNECTIONS_TABLE: aidlc-connections-local
+  GIT_CONNECTIONS_TABLE: aidlc-local-git-connections
+  GIT_PROVIDER_CONNECTIONS_TABLE: aidlc-local-git-provider-connections
+  LOCKS_TABLE: aidlc-discussion-locks-local
+  QUESTIONS_TABLE: aidlc-agent-questions-local
+  READ_STATE_TABLE: aidlc-discussion-read-state-local
+  SESSIONS_TABLE: aidlc-sessions-local
+  NOTIFICATIONS_TABLE: aidlc-notifications-local
+  SOURCE_CONTROL_BINDINGS_TABLE: aidlc-local-source-control-bindings
+  TRACKER_CONNECTIONS_TABLE: aidlc-local-tracker-connections
+  YJS_DOCUMENTS_TABLE: aidlc-yjs-documents-local
+  V2_PROCESS_TABLE: aidlc-v2-executions-local
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_PASSWORD: local
+    volumes:
+      - ./postgres-init.sh:/docker-entrypoint-initdb.d/10-init.sh:ro
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  gremlin:
+    image: tinkerpop/gremlin-server:3.7.3
+    ports:
+      - "8182:8182"
+
+  seaweedfs:
+    image: chrislusf/seaweedfs:3.80
+    command: server -s3 -s3.port=8333 -dir=/data
+    volumes:
+      - seaweed_data:/data
+    networks:
+      default:
+        aliases:
+          # virtual-host-style S3 addressing: <bucket>.seaweedfs must resolve
+          - artifacts.seaweedfs
+    ports:
+      - "8333:8333"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3
+    command: start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HTTP_PORT: "8080"
+      # stable issuer regardless of how the request arrives (host or in-network)
+      KC_HOSTNAME: http://localhost:8081
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./keycloak-realm.json:/opt/keycloak/data/import/jf-ai-dlc-realm.json:ro
+    ports:
+      - "8081:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  dynamo-pg:
+    build:
+      context: ../..
+      dockerfile: deploy/compose/Dockerfile.services
+    image: jf-ai-dlc-services
+    command: node overlay/dynamo-pg/bin/dynamo-pg.js
+    environment:
+      DYNAMO_PG_URL: postgres://postgres:local@postgres:5432/dynamo
+      PORT: "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  aws-shim:
+    image: jf-ai-dlc-services
+    command: node overlay/aws-shim/server.mjs
+    environment:
+      <<: *app-env
+      SHIM_PG_URL: postgres://postgres:local@postgres:5432/shim
+      LAMBDA_ROOT: /app/upstream/collab/lambda
+      PORT: "3004"
+      KC_URL: http://keycloak:8080
+      KC_REALM: jf-ai-dlc
+      KC_ADMIN_CLIENT_ID: aws-shim-admin
+      KC_ADMIN_CLIENT_SECRET: shim-secret-change-me
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api-router:
+    image: jf-ai-dlc-services
+    command: node overlay/api-router/server.mjs
+    environment:
+      <<: *app-env
+      LAMBDA_ROOT: /app/upstream/collab/lambda
+      PORT: "3001"
+    depends_on:
+      - dynamo-pg
+      - gremlin
+      - aws-shim
+    ports:
+      - "3001:3001"
+
+  ws-gateway:
+    image: jf-ai-dlc-services
+    command: node overlay/ws-gateway/server.mjs
+    environment:
+      <<: *app-env
+      LAMBDA_ROOT: /app/upstream/collab/lambda
+      PORT: "3002"
+    depends_on:
+      - dynamo-pg
+    ports:
+      - "3002:3002"
+
+  session-runner:
+    image: jf-ai-dlc-services
+    command: node overlay/session-runner/server.mjs
+    environment:
+      PORT: "3003"
+      SESSION_BACKEND: http
+      AGENT_RUNTIME_URL: http://agentcore:8080
+
+  yjs-server:
+    build:
+      context: ../../upstream/collab/lambda/yjs-server
+    environment:
+      <<: *app-env
+      PORT: "1234"
+    depends_on:
+      - dynamo-pg
+    ports:
+      - "1234:1234"
+
+  frontend:
+    build:
+      context: ../..
+      dockerfile: overlay/frontend/Dockerfile
+      args:
+        # VITE_* are inlined at build time; these point at the host-exposed
+        # ports (the SPA runs in the browser and calls them directly).
+        VITE_API_BASE_URL: http://localhost:3001/api
+        VITE_WEBSOCKET_URL: ws://localhost:3002
+        VITE_YJS_SERVER_URL: ws://localhost:1234
+        VITE_OIDC_ISSUER: http://localhost:8081/realms/jf-ai-dlc
+        VITE_OIDC_CLIENT_ID: jf-ui
+        VITE_AUTH_MODE: local
+        VITE_APP_ORIGIN: http://localhost:8088
+        VITE_AUTH_CALLBACK_URL: http://localhost:8088/auth/callback
+    image: jf-ai-dlc-frontend
+    depends_on:
+      - api-router
+      - ws-gateway
+      - keycloak
+    ports:
+      - "8088:80"
+
+  bootstrap:
+    image: jf-ai-dlc-services
+    command: node overlay/bootstrap/bootstrap.mjs
+    environment:
+      DYNAMO_ENDPOINT: http://dynamo-pg:8000
+      S3_ENDPOINT: http://seaweedfs:8333
+      PROJECT_NAME: aidlc
+      ENVIRONMENT: local
+      BUCKETS: artifacts
+    depends_on:
+      - dynamo-pg
+      - seaweedfs
+    restart: "no"
+
+  # Heavy image (installs the agent CLIs) — enable with --profile agents.
+  # Inference: direct provider APIs; set the keys in .env. A LiteLLM gateway
+  # can be adopted later by pointing the CLI base-URL envs at it.
+  agentcore:
+    profiles: ["agents"]
+    build:
+      context: ../..
+      dockerfile: overlay/agentcore/Dockerfile
+    image: jf-ai-dlc-agentcore
+    environment:
+      <<: *app-env
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # Remap the default Bedrock tier IDs to direct Anthropic model IDs. All
+      # tiers → Sonnet for a cheap first run (override per your cost/quality).
+      AIDLC_MODEL_ALIASES: '{"opus":"claude-sonnet-4-6","sonnet":"claude-sonnet-4-6","haiku":"claude-sonnet-4-6"}'
+
+networks:
+  default:
+    name: jf-ai-dlc
+
+volumes:
+  pg_data:
+  seaweed_data:
+  keycloak_data:

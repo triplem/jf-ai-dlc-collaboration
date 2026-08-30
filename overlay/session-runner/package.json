@@ -1,0 +1,10 @@
+{
+  "name": "@jf-ai-dlc/session-runner",
+  "version": "0.1.0",
+  "description": "Bedrock AgentCore control-plane replacement: serves the InvokeAgentRuntime wire protocol and runs agentcore containers via docker (compose) or a shared runtime (http mode); k8s Jobs backend for prod",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs"
+  }
+}

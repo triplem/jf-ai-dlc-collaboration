@@ -1,0 +1,12 @@
+apiVersion: v2
+name: jf-ai-dlc
+description: >
+  Collaborative AI-DLC platform on OSS services. Deploys the overlay services
+  (dynamo-pg, aws-shim, api-router, ws-gateway, session-runner, yjs-server,
+  agentcore) and a table/bucket bootstrap Job. Stateful infrastructure is
+  external by design — install PostgreSQL (CloudNativePG recommended),
+  Keycloak, JanusGraph and SeaweedFS from their own charts/operators and point
+  the endpoints in values.yaml at them.
+type: application
+version: 0.1.0
+appVersion: "2.0.0"

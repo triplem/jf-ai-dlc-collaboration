@@ -1,0 +1,14 @@
+{
+  "name": "@jf-ai-dlc/durable",
+  "version": "0.1.0",
+  "description": "OSS emulator of the AWS Lambda Durable Execution runtime (protocol in PROTOCOL.md), mounted in aws-shim",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "pg": "^8.23.0",
+    "testcontainers": "^11.0.0"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "realm": "jf-ai-dlc",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "groups": [
+    { "name": "platform-admin" }
+  ],
+  "clients": [
+    {
+      "clientId": "jf-ui",
+      "name": "jf-ai-dlc web UI",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["http://localhost:*", "http://127.0.0.1:*"],
+      "webOrigins": ["*"],
+      "attributes": { "pkce.code.challenge.method": "S256" },
+      "protocolMappers": [
+        {
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "claim.name": "groups",
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "aws-shim-admin",
+      "name": "aws-shim service account (Keycloak admin API)",
+      "publicClient": false,
+      "secret": "shim-secret-change-me",
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false
+    }
+  ],
+  "users": [
+    {
+      "username": "service-account-aws-shim-admin",
+      "enabled": true,
+      "serviceAccountClientId": "aws-shim-admin",
+      "clientRoles": {
+        "realm-management": ["view-users", "manage-users", "query-groups", "query-users"]
+      }
+    },
+    {
+      "id": "00000000-0000-0000-0000-0000000000ad",
+      "username": "admin",
+      "email": "admin@example.com",
+      "firstName": "Platform",
+      "lastName": "Admin",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "admin", "temporary": false }],
+      "groups": ["platform-admin"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-00000000a11c",
+      "username": "alice",
+      "email": "alice@example.com",
+      "firstName": "Alice",
+      "lastName": "Developer",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }]
+    }
+  ]
+}

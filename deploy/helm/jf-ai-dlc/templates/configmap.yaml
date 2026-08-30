@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-env
+  labels: {{ include "jf.labels" . | nindent 4 }}
+data:
+  AWS_ACCESS_KEY_ID: local
+  AWS_SECRET_ACCESS_KEY: local
+  AWS_REGION: us-east-1
+  AWS_ENDPOINT_URL_DYNAMODB: http://{{ .Release.Name }}-dynamo-pg:8000
+  DYNAMODB_LOCAL_ENDPOINT: http://{{ .Release.Name }}-dynamo-pg:8000
+  AWS_ENDPOINT_URL_S3: {{ .Values.endpoints.s3 | quote }}
+  AWS_ENDPOINT_URL_SSM: http://{{ .Release.Name }}-aws-shim:3004
+  AWS_ENDPOINT_URL_SECRETS_MANAGER: http://{{ .Release.Name }}-aws-shim:3004
+  AWS_ENDPOINT_URL_LAMBDA: http://{{ .Release.Name }}-aws-shim:3004
+  AWS_ENDPOINT_URL_PRICING: http://{{ .Release.Name }}-aws-shim:3004
+  AWS_ENDPOINT_URL_COGNITO_IDENTITY_PROVIDER: http://{{ .Release.Name }}-aws-shim:3004
+  AWS_ENDPOINT_URL_BEDROCK_AGENTCORE: http://{{ .Release.Name }}-session-runner:3003
+  NEPTUNE_ENDPOINT: {{ .Values.endpoints.gremlinHost | quote }}
+  GREMLIN_PORT: {{ .Values.endpoints.gremlinPort | quote }}
+  GREMLIN_PROTOCOL: ws
+  WEBSOCKET_ENDPOINT: http://{{ .Release.Name }}-ws-gateway:3002
+  ARTIFACTS_BUCKET: {{ .Values.artifactsBucket | quote }}
+  AGENTCORE_RUNTIME_ARN: arn:aws:bedrock-agentcore:local:000000000000:runtime/{{ .Release.Name }}
+  # Durable orchestrator: intent-start invokes this function, which aws-shim
+  # runs as a durable execution (overlay/durable).
+  V2_ORCHESTRATOR_FUNCTION: v2-orchestrator
+  SOURCE_CONTROL_FUNCTION: source-control
+  # cognito-users guards on this; aws-shim ignores the value and lists Keycloak.
+  COGNITO_USER_POOL_ID: {{ .Values.auth.realm | quote }}
+  OIDC_ISSUER: {{ .Values.endpoints.oidcIssuer | quote }}
+  OIDC_JWKS_URL: {{ .Values.endpoints.keycloakInternal }}/realms/{{ .Values.auth.realm }}/protocol/openid-connect/certs
+  KC_URL: {{ .Values.endpoints.keycloakInternal | quote }}
+  KC_REALM: {{ .Values.auth.realm | quote }}
+  KC_ADMIN_CLIENT_ID: {{ .Values.auth.adminClientId | quote }}
+  {{- include "jf.tables" . | nindent 2 }}

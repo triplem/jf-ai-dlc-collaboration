@@ -1,0 +1,102 @@
+# Image built from deploy/compose/Dockerfile.services (context = repo root)
+image:
+  repository: jf-ai-dlc-services
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# agentcore image built from upstream/collab/lambda/agentcore
+agentImage:
+  repository: jf-ai-dlc-agentcore
+  tag: latest
+
+# External stateful infrastructure (install separately):
+#   PostgreSQL  — CloudNativePG operator (two databases: dynamo, shim)
+#   Keycloak    — codecentric/keycloakx or the Keycloak operator, realm from
+#                 deploy/compose/keycloak-realm.json
+#   JanusGraph  — official janusgraph/janusgraph chart (Gremlin on 8182)
+#   SeaweedFS   — seaweedfs/seaweedfs chart with S3 gateway enabled; the S3
+#                 service must also resolve virtual-host bucket names
+#                 (<bucket>.<host>) or sit behind a path-style rewrite
+endpoints:
+  dynamoPgUrl: postgres://postgres:CHANGE-ME@postgres-rw:5432/dynamo
+  shimPgUrl: postgres://postgres:CHANGE-ME@postgres-rw:5432/shim
+  gremlinHost: janusgraph
+  gremlinPort: "8182"
+  s3: http://seaweedfs-s3:8333
+  keycloakInternal: http://keycloak:8080
+  oidcIssuer: https://auth.example.com/realms/jf-ai-dlc
+  websocket: http://jf-ai-dlc-ws-gateway:3002
+
+auth:
+  realm: jf-ai-dlc
+  adminClientId: aws-shim-admin
+  # Secret with keys: kcAdminClientSecret, anthropicApiKey, openaiApiKey
+  existingSecret: jf-ai-dlc-secrets
+
+naming:
+  projectName: aidlc
+  environment: prod
+
+artifactsBucket: artifacts
+
+ingress:
+  enabled: false
+  className: nginx
+  host: aidlc.example.com
+  # /api → api-router, /ws → ws-gateway, /yjs → yjs-server
+  tls: []
+
+services:
+  dynamo-pg:
+    command: ["node", "overlay/dynamo-pg/bin/dynamo-pg.js"]
+    port: 8000
+    # dynalite semantics require a single writer — do not scale this
+    replicas: 1
+    env:
+      PORT: "8000"
+  aws-shim:
+    command: ["node", "overlay/aws-shim/server.mjs"]
+    port: 3004
+    replicas: 1
+    env:
+      PORT: "3004"
+      LAMBDA_ROOT: /app/upstream/collab/lambda
+  api-router:
+    command: ["node", "overlay/api-router/server.mjs"]
+    port: 3001
+    replicas: 2
+    env:
+      PORT: "3001"
+      LAMBDA_ROOT: /app/upstream/collab/lambda
+  ws-gateway:
+    command: ["node", "overlay/ws-gateway/server.mjs"]
+    port: 3002
+    # connections are held in-process; scale needs sticky routing per connectionId
+    replicas: 1
+    env:
+      PORT: "3002"
+      LAMBDA_ROOT: /app/upstream/collab/lambda
+  session-runner:
+    command: ["node", "overlay/session-runner/server.mjs"]
+    port: 3003
+    replicas: 1
+    env:
+      PORT: "3003"
+      SESSION_BACKEND: http
+      AGENT_RUNTIME_URL: http://jf-ai-dlc-agentcore:8080
+
+yjsServer:
+  enabled: true
+  port: 1234
+  replicas: 1
+
+agentcore:
+  enabled: true
+  replicas: 1
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 1Gi

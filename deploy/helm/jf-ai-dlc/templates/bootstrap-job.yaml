@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-bootstrap-{{ .Release.Revision }}
+  labels: {{ include "jf.labels" . | nindent 4 }}
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels: {{ include "jf.labels" . | nindent 8 }}
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: bootstrap
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["node", "overlay/bootstrap/bootstrap.mjs"]
+          env:
+            - name: DYNAMO_ENDPOINT
+              value: http://{{ .Release.Name }}-dynamo-pg:8000
+            - name: S3_ENDPOINT
+              value: {{ .Values.endpoints.s3 | quote }}
+            - name: PROJECT_NAME
+              value: {{ .Values.naming.projectName | quote }}
+            - name: ENVIRONMENT
+              value: {{ .Values.naming.environment | quote }}
+            - name: BUCKETS
+              value: {{ .Values.artifactsBucket | quote }}

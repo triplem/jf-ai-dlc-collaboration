@@ -68,6 +68,16 @@ const claudeDriver = {
   },
   envForAuth(env) {
     const region = env.BEDROCK_REGION || env.AWS_REGION || 'us-east-1';
+    // jf-ai-dlc: prefer a direct Anthropic API key when present (no Bedrock).
+    // Claude Code uses the native Anthropic API when ANTHROPIC_API_KEY is set
+    // and CLAUDE_CODE_USE_BEDROCK is not. See overlay/patches/.
+    if (env.ANTHROPIC_API_KEY && !env.AWS_BEARER_TOKEN_BEDROCK) {
+      return {
+        ANTHROPIC_API_KEY: env.ANTHROPIC_API_KEY,
+        IS_SANDBOX: '1',
+        CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
+      };
+    }
     const out = {
       CLAUDE_CODE_USE_BEDROCK: '1',
       AWS_REGION: region,

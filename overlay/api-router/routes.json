@@ -1,0 +1,1150 @@
+[
+  {
+    "method": "OPTIONS",
+    "resource": "/api",
+    "lambda": null,
+    "type": "mock",
+    "auth": false
+  },
+  {
+    "method": "POST",
+    "resource": "/api/admin/tracker-migration",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/admin/tracker-migration/status",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/admin/users",
+    "lambda": "cognito-users",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/admin/users/{username}/platform-admin",
+    "lambda": "cognito-users",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/agents/{taskId}",
+    "lambda": "agents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/agents/{taskId}/questions",
+    "lambda": "agents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/agents/capabilities",
+    "lambda": "agents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/agents/settings",
+    "lambda": "agents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/agents/settings",
+    "lambda": "agents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/agents/verify-mcp",
+    "lambda": "agents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/bitbucket/auth",
+    "lambda": "bitbucket",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/bitbucket/callback",
+    "lambda": "bitbucket",
+    "type": "lambda",
+    "auth": false
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/bitbucket/disconnect",
+    "lambda": "bitbucket",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/bitbucket/repos",
+    "lambda": "bitbucket",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/bitbucket/repos/{owner}/{repo}/branches",
+    "lambda": "bitbucket",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/bitbucket/repos/{owner}/{repo}/contents",
+    "lambda": "bitbucket",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/bitbucket/repos/{owner}/{repo}/pulls/{prNumber}/comments",
+    "lambda": "bitbucket",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/bitbucket/repos/{owner}/{repo}/pulls/{prNumber}/comments",
+    "lambda": "bitbucket",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/bitbucket/repos/{owner}/{repo}/tree",
+    "lambda": "bitbucket",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/bitbucket/status",
+    "lambda": "bitbucket",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/blocks/{type}",
+    "lambda": "building-blocks",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/blocks/{type}",
+    "lambda": "building-blocks",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/blocks/{type}/{id}",
+    "lambda": "building-blocks",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/blocks/{type}/{id}",
+    "lambda": "building-blocks",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/blocks/{type}/{id}",
+    "lambda": "building-blocks",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/blocks/{type}/{id}/body",
+    "lambda": "building-blocks",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/blocks/{type}/{id}/script",
+    "lambda": "building-blocks",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/github/admin/config",
+    "lambda": "github",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/github/admin/config",
+    "lambda": "github",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/github/app/repos",
+    "lambda": "github",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/github/app/status",
+    "lambda": "github",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/github/auth",
+    "lambda": "github",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/github/callback",
+    "lambda": "github",
+    "type": "lambda",
+    "auth": false
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/github/disconnect",
+    "lambda": "github",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/github/repos",
+    "lambda": "github",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/github/status",
+    "lambda": "github",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/gitlab/auth",
+    "lambda": "gitlab",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/gitlab/callback",
+    "lambda": "gitlab",
+    "type": "lambda",
+    "auth": false
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/gitlab/disconnect",
+    "lambda": "gitlab",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/gitlab/repos",
+    "lambda": "gitlab",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/gitlab/status",
+    "lambda": "gitlab",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/projects/{projectId}",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/projects/{projectId}",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/agents",
+    "lambda": "agents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/agents/tasks",
+    "lambda": "agents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/custom-mcp-servers",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/projects/{projectId}/custom-mcp-servers",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/custom-mcp-servers/secrets",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/projects/{projectId}/custom-mcp-servers/secrets",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/custom-rules",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/projects/{projectId}/custom-rules",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/projects/{projectId}/intents/{intentId}",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents/{intentId}",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PATCH",
+    "resource": "/api/projects/{projectId}/intents/{intentId}",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/artifacts/{artifactId}/content",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/artifacts/{artifactId}/impact",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/artifacts/{artifactId}/quorum-edit",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/artifacts/{artifactId}/verify",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/artifacts/{artifactId}/versions",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/artifacts/{artifactId}/versions/{versionId}",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/attachments",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/attachments/{attachmentId}",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/attachments/upload",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/audit",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/cancel",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/compose",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/compose-report-upload",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/composes",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/derive",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/discussions",
+    "lambda": "discussions",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/discussions",
+    "lambda": "discussions",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/discussions/{discussionId}",
+    "lambda": "discussions",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/discussions/{discussionId}/assist",
+    "lambda": "discussions",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/discussions/{discussionId}/messages",
+    "lambda": "discussions",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/discussions/{discussionId}/messages",
+    "lambda": "discussions",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/discussions/{discussionId}/messages/{messageId}/redact",
+    "lambda": "discussions",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/discussions/{discussionId}/read",
+    "lambda": "discussions",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/discussions/search",
+    "lambda": "discussions",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/gates/{humanTaskId}/answer",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/gates/{humanTaskId}/revise",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/graph",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/outputs",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/quorum-edits/{editId}/decision",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/realtime-token",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/recompose",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/repair",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/rewind",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/start",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/units/{sectionIndex}/{unitSlug}/feedback",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/intents/{intentId}/units/{sectionIndex}/{unitSlug}/feedback",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/intents/metrics",
+    "lambda": "intents",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/members",
+    "lambda": "users",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/members",
+    "lambda": "users",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/projects/{projectId}/members/{userId}",
+    "lambda": "users",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/projects/{projectId}/members/{userId}",
+    "lambda": "users",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/migrate-tracker",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/realtime-token",
+    "lambda": "discussions",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/projects/{projectId}/repos",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/repos",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/repos",
+    "lambda": "projects",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/projects/{projectId}/source-control",
+    "lambda": "source-control",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/source-control",
+    "lambda": "source-control",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/projects/{projectId}/source-control",
+    "lambda": "source-control",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/source-control/branches",
+    "lambda": "source-control",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/source-control/contents",
+    "lambda": "source-control",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/source-control/reviews/{reviewId}/comments",
+    "lambda": "source-control",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/source-control/reviews/{reviewId}/comments",
+    "lambda": "source-control",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/source-control/tree",
+    "lambda": "source-control",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/sprints",
+    "lambda": "sprints",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/sprints/{sprintId}",
+    "lambda": "sprints",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/trackers",
+    "lambda": "trackers",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/projects/{projectId}/trackers",
+    "lambda": "trackers",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/projects/{projectId}/trackers/{bindingId}",
+    "lambda": "trackers",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/trackers/{bindingId}/issues",
+    "lambda": "trackers",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/trackers/{bindingId}/issues/{resourceId}",
+    "lambda": "trackers",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/projects/{projectId}/trackers/{bindingId}/issues/{resourceId}/comments",
+    "lambda": "trackers",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/code-files",
+    "lambda": "code-files",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/code-files/{codeFileId}",
+    "lambda": "code-files",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/general-info",
+    "lambda": "general-info",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/general-info/{infoId}",
+    "lambda": "general-info",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/graph",
+    "lambda": "sprint-graph",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/questions",
+    "lambda": "questions",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/questions/{questionId}",
+    "lambda": "questions",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/sprints/{sprintId}/realtime-token",
+    "lambda": "discussions",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/requirements",
+    "lambda": "requirements",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/requirements/{requirementId}",
+    "lambda": "requirements",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/review",
+    "lambda": "reviews",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/tasks",
+    "lambda": "tasks",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/tasks/{taskId}",
+    "lambda": "tasks",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/timeline-events",
+    "lambda": "timeline-events",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/user-stories",
+    "lambda": "user-stories",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/sprints/{sprintId}/user-stories/{storyId}",
+    "lambda": "user-stories",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/trackers",
+    "lambda": "trackers",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/trackers/{provider}/{instance}",
+    "lambda": "trackers",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/trackers/auth/{provider}",
+    "lambda": "trackers",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/trackers/callback/{provider}",
+    "lambda": "trackers",
+    "type": "lambda",
+    "auth": false
+  },
+  {
+    "method": "POST",
+    "resource": "/api/trackers/connections/{provider}/{instance}",
+    "lambda": "trackers",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/trackers/external-projects/{provider}/{instance}",
+    "lambda": "trackers",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/trackers/providers",
+    "lambda": "trackers",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/trackers/providers/{provider}/oauth-config",
+    "lambda": "trackers",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/users",
+    "lambda": "cognito-users",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/workflows",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/workflows",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/workflows/{workflowId}",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/workflows/{workflowId}",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/workflows/{workflowId}",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/workflows/{workflowId}/compiled",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "GET",
+    "resource": "/api/workflows/{workflowId}/execution-preview",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/workflows/{workflowId}/phases",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/workflows/{workflowId}/placements",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/workflows/{workflowId}/placements/{stageId}",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/workflows/{workflowId}/placements/{stageId}",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/workflows/{workflowId}/rules",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/workflows/{workflowId}/rules/{layer}/{ruleId}",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/workflows/{workflowId}/scopes",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "DELETE",
+    "resource": "/api/workflows/{workflowId}/scopes/{scopeId}",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "PUT",
+    "resource": "/api/workflows/{workflowId}/scopes/{scopeId}/membership",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  },
+  {
+    "method": "POST",
+    "resource": "/api/workflows/{workflowId}/validate-grid",
+    "lambda": "workflows",
+    "type": "lambda",
+    "auth": true
+  }
+]

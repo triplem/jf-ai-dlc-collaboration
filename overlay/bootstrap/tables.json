@@ -1,0 +1,468 @@
+[
+  {
+    "TableName": "{project}-v2-executions-{environment}",
+    "KeySchema": [
+      {
+        "AttributeName": "pk",
+        "KeyType": "HASH"
+      },
+      {
+        "AttributeName": "sk",
+        "KeyType": "RANGE"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "pk",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "sk",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "GSI1PK",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "GSI1SK",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "GSI2PK",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "GSI2SK",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "GSI3PK",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "GSI3SK",
+        "AttributeType": "S"
+      }
+    ],
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "GSI1",
+        "KeySchema": [
+          {
+            "AttributeName": "GSI1PK",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "GSI1SK",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "GSI2",
+        "KeySchema": [
+          {
+            "AttributeName": "GSI2PK",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "GSI2SK",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "GSI3",
+        "KeySchema": [
+          {
+            "AttributeName": "GSI3PK",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "GSI3SK",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "{project}-sessions-{environment}",
+    "KeySchema": [
+      {
+        "AttributeName": "sessionId",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "sessionId",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "{project}-notifications-{environment}",
+    "KeySchema": [
+      {
+        "AttributeName": "userId",
+        "KeyType": "HASH"
+      },
+      {
+        "AttributeName": "timestamp",
+        "KeyType": "RANGE"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "userId",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "timestamp",
+        "AttributeType": "N"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "{project}-agent-questions-{environment}",
+    "KeySchema": [
+      {
+        "AttributeName": "questionId",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "questionId",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "agentTaskId",
+        "AttributeType": "S"
+      }
+    ],
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "AgentTaskIdIndex",
+        "KeySchema": [
+          {
+            "AttributeName": "agentTaskId",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "{project}-yjs-documents-{environment}",
+    "KeySchema": [
+      {
+        "AttributeName": "documentId",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "documentId",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "{project}-connections-{environment}",
+    "KeySchema": [
+      {
+        "AttributeName": "connectionId",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "connectionId",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "userId",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "documentId",
+        "AttributeType": "S"
+      }
+    ],
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "UserIdIndex",
+        "KeySchema": [
+          {
+            "AttributeName": "userId",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "DocumentIdIndex",
+        "KeySchema": [
+          {
+            "AttributeName": "documentId",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "{project}-agent-outputs-{environment}",
+    "KeySchema": [
+      {
+        "AttributeName": "executionId",
+        "KeyType": "HASH"
+      },
+      {
+        "AttributeName": "agentType",
+        "KeyType": "RANGE"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "executionId",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "agentType",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "{project}-discussion-locks-{environment}",
+    "KeySchema": [
+      {
+        "AttributeName": "lockId",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "lockId",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "{project}-blocks-{environment}",
+    "KeySchema": [
+      {
+        "AttributeName": "pk",
+        "KeyType": "HASH"
+      },
+      {
+        "AttributeName": "sk",
+        "KeyType": "RANGE"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "pk",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "sk",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "GSI1PK",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "GSI1SK",
+        "AttributeType": "S"
+      }
+    ],
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "GSI1",
+        "KeySchema": [
+          {
+            "AttributeName": "GSI1PK",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "GSI1SK",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "{project}-discussion-read-state-{environment}",
+    "KeySchema": [
+      {
+        "AttributeName": "userId",
+        "KeyType": "HASH"
+      },
+      {
+        "AttributeName": "discussionId",
+        "KeyType": "RANGE"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "userId",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "discussionId",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "{project}-{environment}-git-connections",
+    "KeySchema": [
+      {
+        "AttributeName": "userId",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "userId",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "{project}-{environment}-git-provider-connections",
+    "KeySchema": [
+      {
+        "AttributeName": "userId",
+        "KeyType": "HASH"
+      },
+      {
+        "AttributeName": "providerInstance",
+        "KeyType": "RANGE"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "userId",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "providerInstance",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "{project}-{environment}-source-control-bindings",
+    "KeySchema": [
+      {
+        "AttributeName": "projectId",
+        "KeyType": "HASH"
+      },
+      {
+        "AttributeName": "bindingKey",
+        "KeyType": "RANGE"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "projectId",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "bindingKey",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "credentialRef",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "credentialBindingKey",
+        "AttributeType": "S"
+      }
+    ],
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "CredentialRefIndex",
+        "KeySchema": [
+          {
+            "AttributeName": "credentialRef",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "credentialBindingKey",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "{project}-{environment}-tracker-connections",
+    "KeySchema": [
+      {
+        "AttributeName": "userId",
+        "KeyType": "HASH"
+      },
+      {
+        "AttributeName": "providerInstance",
+        "KeyType": "RANGE"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "userId",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "providerInstance",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  }
+]

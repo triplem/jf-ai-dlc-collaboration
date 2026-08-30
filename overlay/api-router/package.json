@@ -1,0 +1,14 @@
+{
+  "name": "@jf-ai-dlc/api-router",
+  "version": "0.1.0",
+  "description": "API Gateway replacement: routes HTTP requests to upstream lambda handlers in-process, per the terraform-derived routes.json",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "jose": "^6.0.0"
+  }
+}
