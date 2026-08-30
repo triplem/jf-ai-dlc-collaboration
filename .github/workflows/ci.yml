@@ -19,6 +19,18 @@ jobs:
       - name: routes.json / tables.json are in sync with the terraform
         run: git diff --exit-code overlay/api-router/routes.json overlay/bootstrap/tables.json
 
+  patches:
+    # overlay/patches/*.patch must apply cleanly onto the pristine upstream/collab
+    # subtree (they are applied at image BUILD time — see docs/patches.md). This
+    # catches a patch broken by upstream drift, fast and without Docker.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: overlay/patches apply cleanly onto pristine upstream
+        run: scripts/apply-patches.sh
+      - name: applied diff (sanity — non-empty)
+        run: git diff --stat -- upstream/collab
+
   tests:
     # dynamo-pg + durable emulator suites (testcontainers → Docker on the runner).
     runs-on: ubuntu-latest

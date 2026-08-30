@@ -33,6 +33,11 @@ RUN for p in overlay/patches/*.patch; do git apply "$p"; done
 `scripts/update-upstream.sh` runs `git apply --check` on every patch after a
 subtree pull so a patch that no longer applies is caught at update time.
 
+CI guards this two ways (`.github/workflows/`): the **`patches`** job in
+`ci.yml` runs `apply-patches.sh` on every push/PR (fast, no Docker), and
+`images.yml` builds + publishes the images — whose first stage applies the
+patches — to `ghcr.io` on push to `main` and version tags.
+
 Patches apply in filename order (`0001`, `0002`, …), each on top of the previous
 — so a later patch may depend on an earlier one.
 
