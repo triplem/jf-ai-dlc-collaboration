@@ -58,4 +58,8 @@ data:
   # prefix must be <project>/<env>/git-token (terraform shape). Unset -> a
   # 500 on the repo list after connecting.
   GIT_TOKEN_SSM_PREFIX: {{ printf "%s/%s/git-token" .Values.naming.projectName .Values.naming.environment | quote }}
+  # SSM base prefix (/<project>/<env>) for agent settings + custom-MCP-server
+  # config/secrets. Unset degrades gracefully; set so those features persist.
+  AGENT_SETTINGS_SSM_PREFIX: {{ printf "/%s/%s" .Values.naming.projectName .Values.naming.environment | quote }}
+  MCP_SECRETS_SSM_PREFIX: {{ printf "/%s/%s" .Values.naming.projectName .Values.naming.environment | quote }}
   {{- include "jf.tables" . | nindent 2 }}
