@@ -89,6 +89,21 @@ const applyCheckpoint = async (arn, updates = []) => {
     const op = { ...existing, ...update };
     if (update.Action && STATUS_FOR_ACTION[update.Action]) op.Status = STATUS_FOR_ACTION[update.Action];
 
+    // The SDK checkpoints a step/wait/context result verbatim as `Payload` (and
+    // errors as `Error`), but on replay reads it back from `<SubType>Details.Result`
+    // / `.Error` (client-lambda `getStepData`). Without this translation a
+    // replayed step returns `undefined` — the orchestrator's first resume then
+    // reads a null META and bails with `execution_not_found`, so no run ever
+    // advances past its first stage. Mirror the CallbackDetails handling below.
+    if (update.Payload !== undefined || update.Error !== undefined) {
+      const detailsKey = `${op.SubType || op.Type || 'Step'}Details`;
+      op[detailsKey] = {
+        ...(op[detailsKey] || {}),
+        ...(update.Payload !== undefined ? { Result: update.Payload } : {}),
+        ...(update.Error !== undefined ? { Error: update.Error } : {}),
+      };
+    }
+
     if (op.Type === 'CALLBACK' && update.Action === 'START' && !op.CallbackDetails?.CallbackId) {
       const callbackId = `cb-${crypto.randomUUID()}`;
       op.CallbackDetails = { ...(op.CallbackDetails || {}), CallbackId: callbackId };
