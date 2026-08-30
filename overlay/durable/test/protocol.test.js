@@ -6,10 +6,13 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { GenericContainer, Wait } from 'testcontainers';
 import pg from 'pg';
 
-import { initDurable, handleDurableRest } from '../durable.mjs';
+import { initDurable, handleDurableRest, startDurableExecution } from '../durable.mjs';
 
 let container;
 let pool;
@@ -97,4 +100,34 @@ test('heartbeat is accepted as a no-op', async () => {
 test('a non-durable path returns null (falls through to the shim)', async () => {
   const res = await rest('POST', `/2015-03-31/functions/foo/invocations`, {});
   assert.equal(res, null);
+});
+
+// Driver regression: a SUCCEEDED handler carries its return value in the SDK's
+// `Result` field, not `Output`. The driver must persist `Result` as the
+// execution Output — otherwise every completed run stores null.
+test('driver persists the handler Result envelope as the execution Output', async () => {
+  // Stand up a fake durability-enabled lambda whose handler returns a terminal
+  // envelope with the value in `Result` (the shape the real SDK emits).
+  const root = mkdtempSync(path.join(os.tmpdir(), 'durable-lambda-'));
+  writeFileSync(path.join(root, 'package.json'), '{"type":"module"}');
+  mkdirSync(path.join(root, 'v2-orchestrator'));
+  writeFileSync(
+    path.join(root, 'v2-orchestrator', 'index.js'),
+    "export const lambdaHandler = async () => ({ Status: 'SUCCEEDED', Result: { intentId: 'i-123', done: true } });\n",
+  );
+  await initDurable(pool, root); // repoint the driver at the fake lambda root
+
+  const arn = await startDurableExecution('v2-orchestrator', { hello: 'world' });
+
+  // runInvoke is fire-and-forget; poll the execution record until terminal.
+  let output;
+  for (let i = 0; i < 100; i++) {
+    const res = await rest('GET', `/2025-12-01/durable-executions/${encodeURIComponent(arn)}`);
+    if (res.body.Status === 'SUCCEEDED') {
+      output = res.body.Output;
+      break;
+    }
+    await new Promise((r) => setTimeout(r, 20));
+  }
+  assert.deepEqual(output, { intentId: 'i-123', done: true });
 });

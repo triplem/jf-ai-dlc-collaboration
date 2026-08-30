@@ -171,13 +171,18 @@ const invokeOnce = async (arn, updatedOperationIds) => {
     return;
   }
   const status = body?.Status;
+  // The SDK's terminal envelope carries the handler's return value in `Result`
+  // (with `Output` as a fallback for older shapes).
+  const result = body?.Result ?? body?.Output ?? null;
   if (process.env.DURABLE_VERBOSE_MODE === 'true') {
-    console.log(`🟣 durable invoke returned Status=${status} keys=[${Object.keys(body || {}).join(',')}]`);
+    console.log(
+      `🟣 durable invoke returned Status=${status} result=${JSON.stringify(result)?.slice(0, 300)}`,
+    );
   }
   if (status === 'SUCCEEDED') {
     await pool.query(`UPDATE durable_executions SET status='SUCCEEDED', output=$2, ended_at=now() WHERE arn=$1`, [
       arn,
-      body?.Output ?? null,
+      result,
     ]);
   } else if (status === 'FAILED') {
     await pool.query(`UPDATE durable_executions SET status='FAILED', error=$2, ended_at=now() WHERE arn=$1`, [
