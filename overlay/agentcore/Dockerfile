@@ -18,7 +18,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends git \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /src
-COPY upstream/collab/lambda upstream/collab/lambda
+COPY upstream/collab upstream/collab
 COPY overlay/patches overlay/patches
 RUN for p in overlay/patches/*.patch; do echo "applying $p"; git apply "$p"; done
 
