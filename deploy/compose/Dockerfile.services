@@ -38,5 +38,11 @@ RUN cd overlay/dynamo-pg && npm install --omit=dev --no-audit --no-fund \
  && cd ../ws-gateway && npm install --omit=dev --no-audit --no-fund \
  && cd ../aws-shim && npm install --omit=dev --no-audit --no-fund
 
+# OSS substitute for the AWS-internal `neptune-lambda-client` (not publicly
+# installable, so `npm ci` above leaves it out → discussions/questions/timeline
+# 502 with ERR_MODULE_NOT_FOUND). Drop the shim into the upstream node_modules
+# so those lambdas resolve it; `gremlin` resolves from the parent node_modules.
+RUN cp -r overlay/neptune-shim upstream/collab/node_modules/neptune-lambda-client
+
 ENV NODE_ENV=production
 CMD ["node", "--version"]

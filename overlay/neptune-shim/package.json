@@ -1,0 +1,9 @@
+{
+  "name": "neptune-lambda-client",
+  "version": "3.0.0-oss-shim",
+  "private": true,
+  "description": "OSS substitute for the AWS-internal neptune-lambda-client: a plain Gremlin (JanusGraph) connection, no Neptune IAM/SigV4. Installed into node_modules at image build time; upstream stays pristine.",
+  "type": "module",
+  "main": "index.js",
+  "license": "Apache-2.0"
+}
