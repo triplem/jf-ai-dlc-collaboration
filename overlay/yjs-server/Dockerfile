@@ -12,7 +12,7 @@
 FROM node:24.15.0-alpine3.23 AS upstream-patched
 RUN apk add --no-cache git
 WORKDIR /src
-COPY upstream/collab/lambda upstream/collab/lambda
+COPY upstream/collab upstream/collab
 COPY overlay/patches overlay/patches
 RUN for p in overlay/patches/*.patch; do echo "applying $p"; git apply "$p"; done
 
