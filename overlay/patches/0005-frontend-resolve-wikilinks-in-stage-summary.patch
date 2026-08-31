@@ -1,0 +1,42 @@
+diff --git a/upstream/collab/frontend/src/components/intent/StageReviewPanel.tsx b/upstream/collab/frontend/src/components/intent/StageReviewPanel.tsx
+index 4ca54f2..b794341 100644
+--- a/upstream/collab/frontend/src/components/intent/StageReviewPanel.tsx
++++ b/upstream/collab/frontend/src/components/intent/StageReviewPanel.tsx
+@@ -6,6 +6,7 @@ import { useIntentGraph } from '@/hooks/useIntentGraph';
+ import { useYjsDocument } from '@/hooks/useYjsDocument';
+ import { CollaborativeTextarea } from '@/components/CollaborativeTextarea';
+ import { ArtifactViewer } from '@/components/intent/ArtifactViewer';
++import { ArtifactMarkdown } from '@/components/intent/ArtifactMarkdown';
+ import { DerivedItemRow } from '@/components/intent/DerivedItemRow';
+ import { scrollAndFlash } from '@/components/intent/workProductsFocus';
+ import { DiscussButton } from '@/components/discussion/DiscussButton';
+@@ -339,7 +340,13 @@ export function StageReviewPanel({
+                         </div>
+                       </div>
+                       {artifact.summaryGist && (
+-                        <p className="mt-2 text-sm text-muted-foreground">{artifact.summaryGist}</p>
++                        <div className="mt-2 text-sm text-muted-foreground [&_p]:m-0">
++                          <ArtifactMarkdown
++                            content={artifact.summaryGist}
++                            artifacts={artifacts}
++                            derivedItems={derivedItems}
++                          />
++                        </div>
+                       )}
+                       {artifact.summaryClaims && artifact.summaryClaims.length > 0 && (
+                         <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+@@ -349,7 +356,13 @@ export function StageReviewPanel({
+                                 className="mt-0.5 h-3 w-3 shrink-0 text-agent-running"
+                                 strokeWidth={3}
+                               />
+-                              <span>{claim}</span>
++                              <div className="min-w-0 [&_p]:m-0">
++                                <ArtifactMarkdown
++                                  content={claim}
++                                  artifacts={artifacts}
++                                  derivedItems={derivedItems}
++                                />
++                              </div>
+                             </li>
+                           ))}
+                         </ul>
