@@ -3,6 +3,18 @@
 #
 # VITE_* are inlined at build time, so they are build ARGs. The compose service
 # passes local-stack values; override them for other environments.
+
+# --- stage 0: apply overlay/patches onto the pristine upstream subtree --------
+# upstream/collab is a pristine git-subtree vendor (README: never hand-edit);
+# local modifications live as overlay/patches/*.patch and are applied here at
+# build time. See docs/patches.md.
+FROM node:22-alpine AS upstream-patched
+RUN apk add --no-cache git
+WORKDIR /src
+COPY upstream/collab upstream/collab
+COPY overlay/patches overlay/patches
+RUN for p in overlay/patches/*.patch; do echo "applying $p"; git apply "$p"; done
+
 FROM node:22-alpine AS build
 
 ARG VITE_API_BASE_URL=http://localhost:3001/api
@@ -27,9 +39,10 @@ ENV VITE_API_BASE_URL=$VITE_API_BASE_URL \
     VITE_ENVIRONMENT=$VITE_ENVIRONMENT
 
 WORKDIR /app
-# root package.json is read by the upstream vite config for the app version
-COPY upstream/collab/package.json upstream/collab/package.json
-COPY upstream/collab/frontend upstream/collab/frontend
+# root package.json is read by the upstream vite config for the app version;
+# the frontend sources come PATCHED from stage 0.
+COPY --from=upstream-patched /src/upstream/collab/package.json upstream/collab/package.json
+COPY --from=upstream-patched /src/upstream/collab/frontend upstream/collab/frontend
 COPY overlay/frontend overlay/frontend
 
 RUN cd upstream/collab/frontend && npm install --no-audit --no-fund
