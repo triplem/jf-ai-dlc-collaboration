@@ -1,5 +1,5 @@
 diff --git a/upstream/collab/frontend/src/components/intent/StageReviewPanel.tsx b/upstream/collab/frontend/src/components/intent/StageReviewPanel.tsx
-index 4ca54f2..b794341 100644
+index 4ca54f2..cc465cb 100644
 --- a/upstream/collab/frontend/src/components/intent/StageReviewPanel.tsx
 +++ b/upstream/collab/frontend/src/components/intent/StageReviewPanel.tsx
 @@ -6,6 +6,7 @@ import { useIntentGraph } from '@/hooks/useIntentGraph';
@@ -18,7 +18,7 @@ index 4ca54f2..b794341 100644
 +                        <div className="mt-2 text-sm text-muted-foreground [&_p]:m-0">
 +                          <ArtifactMarkdown
 +                            content={artifact.summaryGist}
-+                            artifacts={artifacts}
++                            artifacts={detail.artifacts}
 +                            derivedItems={derivedItems}
 +                          />
 +                        </div>
@@ -33,7 +33,7 @@ index 4ca54f2..b794341 100644
 +                              <div className="min-w-0 [&_p]:m-0">
 +                                <ArtifactMarkdown
 +                                  content={claim}
-+                                  artifacts={artifacts}
++                                  artifacts={detail.artifacts}
 +                                  derivedItems={derivedItems}
 +                                />
 +                              </div>
